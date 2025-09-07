@@ -6,6 +6,11 @@ const commands = [
     name: 'ping',
     description: 'Replies with Pong!',
   },
+
+  {
+    name: 'helloapi',
+    description: 'Replies with hello from the API',
+  },
 ];
 
 const rest = new REST({ version: '10' }).setToken(TOKEN);
@@ -28,6 +33,17 @@ client.on(Events.ClientReady, readyClient => {
 
 client.on(Events.InteractionCreate, async interaction => {
   if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === 'helloapi') {
+    try {
+      const response = await fetch("http://localhost:5272/api/hello");
+      const data = await response.json();
+      await interaction.reply(data.message);
+    } catch (error) {
+      console.error(error);
+      await interaction.reply('Error fetching API');
+    }
+  }
 
   if (interaction.commandName === 'ping') {
     await interaction.reply('Pong!');

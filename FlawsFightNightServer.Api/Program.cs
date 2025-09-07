@@ -10,10 +10,10 @@ namespace FlawsFightNightServer.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var connectionString = "Host=localhost;Database=flawsfightnight;Username=ffnuser;Password=secret";
+            //var connectionString = "Host=localhost;Database=flawsfightnight;Username=ffnuser;Password=secret";
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(connectionString));
+            //builder.Services.AddDbContext<AppDbContext>(options =>
+            //    options.UseNpgsql(connectionString));
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -21,21 +21,21 @@ namespace FlawsFightNightServer.Api
 
             var app = builder.Build();
 
-            // Test database connection BEFORE app.Run()
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            //// Test database connection BEFORE app.Run()
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                try
-                {
-                    var tournaments = db.Tournaments.ToList();
-                    Console.WriteLine($"Found {tournaments.Count} tournaments in DB");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Database test failed: " + ex.Message);
-                }
-            }
+            //    try
+            //    {
+            //        var tournaments = db.Tournaments.ToList();
+            //        Console.WriteLine($"Found {tournaments.Count} tournaments in DB");
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine("Database test failed: " + ex.Message);
+            //    }
+            //}
 
             // Configure HTTP request pipeline
             if (app.Environment.IsDevelopment())

@@ -36,7 +36,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
   if (interaction.commandName === 'helloapi') {
     try {
-      const response = await fetch("http://localhost:5272/api/hello");
+      const response = await fetch("http://localhost:5000/api/hello");
       const data = await response.json();
       await interaction.reply(data.message);
     } catch (error) {

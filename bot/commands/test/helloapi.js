@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import { apiClient } from "../../appClient.js";
+import { apiClient } from "../../apiClient.js";
 
 export default {
   data: new SlashCommandBuilder()

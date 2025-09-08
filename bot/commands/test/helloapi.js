@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
+import { apiClient } from "../../appClient.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -7,8 +8,7 @@ export default {
   
   async execute(interaction) {
     try {
-      const response = await fetch("http://localhost:5000/api/hello");
-      const data = await response.json();
+      const data = await apiClient("/hello");
       await interaction.reply(data.message);
     } catch (error) {
       console.error(error);

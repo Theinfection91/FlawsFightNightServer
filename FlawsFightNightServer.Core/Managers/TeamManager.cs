@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace FlawsFightNightServer.Core.Managers
 {
-    public class TournamentManager : IManager
+    internal class TeamManager
     {
-        public string Name => "TournamentManager";
-    }  
+    }
 }

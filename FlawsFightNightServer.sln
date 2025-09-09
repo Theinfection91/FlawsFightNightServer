@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlawsFightNightServer.Core"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlawsFightNightServer.Data", "FlawsFightNightServer.Data\FlawsFightNightServer.Data.csproj", "{9905E7B8-4500-40BA-8184-B9FB57B9284C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlawsFightNightServer.Managers", "FlawsFightNightServer.Managers\FlawsFightNightServer.Managers.csproj", "{E08FC516-AAB4-4EC5-A5AA-8D50E076BAE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9905E7B8-4500-40BA-8184-B9FB57B9284C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9905E7B8-4500-40BA-8184-B9FB57B9284C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9905E7B8-4500-40BA-8184-B9FB57B9284C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E08FC516-AAB4-4EC5-A5AA-8D50E076BAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E08FC516-AAB4-4EC5-A5AA-8D50E076BAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E08FC516-AAB4-4EC5-A5AA-8D50E076BAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E08FC516-AAB4-4EC5-A5AA-8D50E076BAE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

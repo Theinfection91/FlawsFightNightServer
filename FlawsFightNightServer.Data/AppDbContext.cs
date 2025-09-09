@@ -1,4 +1,4 @@
-﻿using FlawsFightNightServer.Core.Entities;
+﻿using FlawsFightNightServer.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

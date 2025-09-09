@@ -18,7 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FlawsFightNightServer.Data\FlawsFightNightServer.Data.csproj" />
+    <ProjectReference Include="..\FlawsFightNightServer.Core\FlawsFightNightServer.Core.csproj" />
+    <ProjectReference Include="..\FlawsFightNightServer.Managers\FlawsFightNightServer.Managers.csproj" />
   </ItemGroup>
 
 </Project>

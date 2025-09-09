@@ -1,4 +1,6 @@
+using FlawsFightNightServer.Core.Managers;
 using FlawsFightNightServer.Data;
+using FlawsFightNightServer.Data.Handlers;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -10,32 +12,20 @@ namespace FlawsFightNightServer.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //var connectionString = "Host=localhost;Database=flawsfightnight;Username=ffnuser;Password=secret";
-
-            //builder.Services.AddDbContext<AppDbContext>(options =>
-            //    options.UseNpgsql(connectionString));
-
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            /////////// Register my services ///////////
+            // Managers
+            builder.Services.AddSingleton<DataManager>();
+            builder.Services.AddSingleton<TournamentManager>();
+
+            // Data Handlers
+            builder.Services.AddSingleton<TournamentsDatabaseHandler>();
+
+            // Build the app
             var app = builder.Build();
-
-            //// Test database connection BEFORE app.Run()
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-            //    try
-            //    {
-            //        var tournaments = db.Tournaments.ToList();
-            //        Console.WriteLine($"Found {tournaments.Count} tournaments in DB");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine("Database test failed: " + ex.Message);
-            //    }
-            //}
 
             // Configure HTTP request pipeline
             if (app.Environment.IsDevelopment())
@@ -47,6 +37,9 @@ namespace FlawsFightNightServer.Api
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+
+            // Initialize DataManager to load data at startup
+            DataManager dataManager = app.Services.GetRequiredService<DataManager>();
 
             app.Run();
         }

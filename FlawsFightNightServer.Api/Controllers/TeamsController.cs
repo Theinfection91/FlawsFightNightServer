@@ -7,10 +7,10 @@ namespace FlawsFightNightServer.Api.Controllers
     [ApiController]
     public class TeamsController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetTeams(string tournamentId)
-        {
+        //[HttpGet]
+        //public IActionResult GetTeams(string tournamentId)
+        //{
 
-        }
+        //}
     }
 }

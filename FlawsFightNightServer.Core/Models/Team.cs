@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlawsFightNightServer.Core.Managers
+namespace FlawsFightNightServer.Core.Models
 {
-    public interface IManager
+    public class Team
     {
-        string Name { get; }
+
     }
 }

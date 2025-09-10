@@ -12,10 +12,10 @@ namespace FlawsFightNightServer.Core.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
-        public TournamentType Type { get; set; }
-        public int TeamSize { get; set; }
-        public string TeamSizeFormat => $"{TeamSize}v{TeamSize}";
+        public string? Description { get; set; }
+        public TournamentType? Type { get; set; }
+        public int? TeamSize { get; set; }
+        public string TeamSizeFormat => TeamSize.HasValue ? $"{TeamSize}v{TeamSize}" : "N/A";
         public List<Team> Teams = [];
     }
 }

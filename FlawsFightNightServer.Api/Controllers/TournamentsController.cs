@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FlawsFightNightServer.Core.Managers;
+using FlawsFightNightServer.Core.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace FlawsFightNightServer.Api.Controllers
@@ -7,6 +9,12 @@ namespace FlawsFightNightServer.Api.Controllers
     [ApiController]
     public class TournamentsController : ControllerBase
     {
+        private TournamentManager _tournamentManager;
+        public TournamentsController(TournamentManager tournamentManager)
+        {
+            _tournamentManager = tournamentManager;
+        }
+
         // GET: api/tournaments
         [HttpGet]
         public IActionResult GetTournaments()
@@ -21,21 +29,31 @@ namespace FlawsFightNightServer.Api.Controllers
             return Ok(tournaments);
         }
 
-        // GET: api/tournaments/{id}
         [HttpGet("{id}")]
-        public IActionResult GetTournament(int id)
+        public IActionResult GetTournament(string id)
         {
-            // Just returning dummy data
-            var tournament = new { Id = id, Name = $"Flaws Fight Night #{id}", Teams = 8 };
+            var tournament = _tournamentManager.GetById(id);
+            if (tournament == null)
+                return NotFound();
+
             return Ok(tournament);
         }
 
-        // POST: api/tournaments
-        [HttpPost]
-        public IActionResult CreateTournament([FromBody] dynamic newTournament)
+        // POST: api/tournaments/create
+        [HttpPost("create")]
+        public IActionResult CreateTournament([FromBody] Tournament newTournament)
         {
-            // For now, just echo back what was sent
-            return CreatedAtAction(nameof(GetTournament), new { id = 999 }, newTournament);
+            // Check if given ID is already in use
+            if (_tournamentManager.IsIdInDatabase(newTournament.Id))
+            {
+                return Conflict(new { message = $"Tournament ID ({newTournament.Id}) already exists." });
+            }
+
+            // Add the new tournament
+            _tournamentManager.AddTournament(newTournament);
+
+            return CreatedAtAction(nameof(GetTournament), new { id = newTournament.Id }, newTournament);
+
         }
     }
 }

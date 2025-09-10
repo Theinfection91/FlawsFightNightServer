@@ -19,6 +19,7 @@ namespace FlawsFightNightServer.Api
             /////////// Register my services ///////////
             // Managers
             builder.Services.AddSingleton<DataManager>();
+            builder.Services.AddSingleton<TeamManager>();
             builder.Services.AddSingleton<TournamentManager>();
 
             // Data Handlers

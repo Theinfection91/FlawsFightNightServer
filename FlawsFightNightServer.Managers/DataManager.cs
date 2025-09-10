@@ -1,5 +1,4 @@
-﻿using FlawsFightNightServer.Core.Interfaces;
-using FlawsFightNightServer.Data.Handlers;
+﻿using FlawsFightNightServer.Data.Handlers;
 using FlawsFightNightServer.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FlawsFightNightServer.Core.Managers
 {
-    public class DataManager : IManager
+    public class DataManager
     {
         public string Name => "DataManager";
 

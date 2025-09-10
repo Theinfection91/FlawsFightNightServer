@@ -1,9 +1,9 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandSubcommandBuilder } from 'discord.js';
 import { apiClient } from '../../apiClient.js';
 
 export default {
-    data: new SlashCommandBuilder()
-        .setName('create_tournament')
+    data: new SlashCommandSubcommandBuilder()
+        .setName('create')
         .setDescription('Creates a new tournament.')
         .addStringOption(option =>
             option

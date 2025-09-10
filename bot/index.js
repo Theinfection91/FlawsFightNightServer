@@ -17,17 +17,16 @@ const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const commandModule = await import(`file://${filePath}`);
-        const command = commandModule.default;
-        if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
-        } else {
-            console.log(`[WARNING] The command at ${filePath} is missing "data" or "execute".`);
-        }
+    const commandPath = path.join(foldersPath, folder, 'index.js'); // only index.js per folder
+    if (!fs.existsSync(commandPath)) continue;
+
+    const commandModule = await import(`file://${commandPath}`);
+    const command = commandModule.default;
+
+    if ('data' in command && 'execute' in command) {
+        client.commands.set(command.data.name, command);
+    } else {
+        console.log(`[WARNING] The command at ${commandPath} is missing "data" or "execute".`);
     }
 }
 

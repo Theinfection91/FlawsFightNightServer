@@ -1,8 +1,8 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandSubcommandBuilder } from 'discord.js';
 
 export default {
-    data: new SlashCommandBuilder()
-        .setName('registerteam')
+    data: new SlashCommandSubcommandBuilder()
+        .setName('register')
         .setDescription('Registers a new team.')
         .addStringOption(option =>
             option.setName('name')

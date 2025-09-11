@@ -7,19 +7,26 @@ import { API_URL } from './creds.js';
 console.log(`API_URL is set to: ${API_URL}`);
 
 export async function apiClient(endpoint, options = {}) {
-    const res = await fetch(`${API_URL}${endpoint}`, {
+    const response = await fetch(`http://localhost:5000/api${endpoint}`, {
         method: options.method || 'GET',
         headers: { 'Content-Type': 'application/json' },
         body: options.body ? JSON.stringify(options.body) : undefined
     });
 
-    const data = await res.json();
+    const raw = await response.text(); // only once
+    let data;
 
-    if (!res.ok) {
-        // Attach status to the error
-        const error = new Error(data?.message || `API error: ${res.status}`);
-        error.status = res.status;
-        throw error;
+    try {
+        data = JSON.parse(raw);
+    } catch {
+        data = raw; // plain text fallback
+    }
+
+    if (!response.ok) {
+        const err = new Error(`API error: ${response.status}`);
+        err.status = response.status;
+        err.body = data;
+        throw err;
     }
 
     return data;

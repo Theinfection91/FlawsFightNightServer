@@ -1,4 +1,5 @@
-﻿using FlawsFightNightServer.Core.Managers;
+﻿using FlawsFightNightServer.Api.DTOs.Tournaments;
+using FlawsFightNightServer.Core.Managers;
 using FlawsFightNightServer.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -41,19 +42,28 @@ namespace FlawsFightNightServer.Api.Controllers
 
         // POST: api/tournaments/create
         [HttpPost("create")]
-        public IActionResult CreateTournament([FromBody] Tournament newTournament)
+        public IActionResult CreateTournament([FromBody] CreateTournamentRequest createTournamentRequest)
         {
-            // Check if given ID is already in use
-            if (_tournamentManager.IsIdInDatabase(newTournament.Id))
+            try
             {
-                return Conflict(new { message = $"Tournament ID ({newTournament.Id}) already exists." });
+                Tournament newTournament = _tournamentManager.CreateNewTournament(
+                    createTournamentRequest.TournamentName,
+                    createTournamentRequest.TournamentType,
+                    createTournamentRequest.TeamSize
+                );
+                if (newTournament == null)
+                {
+                    return BadRequest("Failed to create a new tournament.");
+                }
+                // Add the new tournament
+                _tournamentManager.AddTournament(newTournament);
+
+                return CreatedAtAction(nameof(GetTournament), new { id = newTournament.Id, newTournament.Name, newTournament.TeamSizeFormat  }, newTournament);
             }
-
-            // Add the new tournament
-            _tournamentManager.AddTournament(newTournament);
-
-            return CreatedAtAction(nameof(GetTournament), new { id = newTournament.Id }, newTournament);
-
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

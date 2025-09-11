@@ -1,4 +1,5 @@
-﻿using FlawsFightNightServer.Core.Models;
+﻿using FlawsFightNightServer.Core.Enumerators;
+using FlawsFightNightServer.Core.Models;
 using FlawsFightNightServer.Managers;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,29 @@ namespace FlawsFightNightServer.Core.Managers
             
         }
 
+
+
+        public string? GenerateTournamentId()
+        {
+            bool isUnique = false;
+            string uniqueId;
+
+            while (!isUnique)
+            {
+                Random random = new();
+                int randomInt = random.Next(100, 1000);
+                uniqueId = $"T{randomInt}";
+
+                // Check if the generated ID is unique
+                if (!IsIdInDatabase(uniqueId))
+                {
+                    isUnique = true;
+                    return uniqueId;
+                }
+            }
+            return null;
+        }
+
         public bool IsIdInDatabase(string id)
         {
             return _dataManager.TournamentsDatabaseFile.Tournaments.Any(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
@@ -23,6 +47,30 @@ namespace FlawsFightNightServer.Core.Managers
         public Tournament? GetById(string id)
         {
             return _dataManager.TournamentsDatabaseFile.Tournaments.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public Tournament CreateNewTournament(string name, string type, int teamSize)
+        {
+            var newTournament = new Tournament
+            {
+                Id = GenerateTournamentId() ?? throw new Exception("Failed to generate a unique Tournament ID."),
+                Name = name,
+                Type = TournamentTypeResolver(type),
+                TeamSize = teamSize
+            };
+            return newTournament;
+        }
+
+        public TournamentType TournamentTypeResolver(string type)
+        {
+            return type.ToLower() switch
+            {
+                "ladder" => TournamentType.Ladder,
+                "single_elimination" => TournamentType.SingleElimination,
+                "double_elimination" => TournamentType.DoubleElimination,
+                "roundrobin" => TournamentType.RoundRobin,
+                _ => throw new ArgumentException($"Invalid tournament type: {type}")
+            };
         }
 
         public void AddTournament(Tournament tournament)

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FlawsFightNightServer.Core.Managers;
+using FlawsFightNightServer.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlawsFightNightServer.Api.Controllers
@@ -7,10 +9,22 @@ namespace FlawsFightNightServer.Api.Controllers
     [ApiController]
     public class TeamsController : ControllerBase
     {
-        //[HttpGet]
-        //public IActionResult GetTeams(string tournamentId)
-        //{
+        private TeamManager _teamManager;
+        public TeamsController(TeamManager teamManager)
+        {
+            _teamManager = teamManager;
+        }
 
-        //}
+        [HttpGet("{id}")]
+        public IActionResult GetTeam(string id)
+        {
+            return Ok(new { message = "This is a placeholder response from TeamsController." });
+        }
+
+        public IActionResult RegisterTeam([FromBody] Team newTeam)
+        {
+            // Place holder logic here
+            return CreatedAtAction(nameof(GetTeam), new { id = newTeam.Name }, newTeam);
+        }
     }
 }

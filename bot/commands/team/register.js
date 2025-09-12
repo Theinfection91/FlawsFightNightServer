@@ -62,7 +62,7 @@ export default {
             });
 
             await interaction.reply(
-                `✅ ${data.message}\nTeam ID: **${data.teamId}**\nName: **${data.teamName}**\nMembers: ${Object.values(data.members).join(', ')}`
+                `✅ ${data.message}\nTeam ID: **${data.teamId}**\nName: **${data.teamName}**\nMembers: ${Object.values(data.members).map(m => m.displayName || "Unknown").join(', ')}`
             );
         } catch (error) {
             console.error('Full error object:', error);  // <-- log everything

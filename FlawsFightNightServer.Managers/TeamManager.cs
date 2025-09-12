@@ -68,11 +68,19 @@ namespace FlawsFightNightServer.Core.Managers
 
         public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members)
         {
+            // Convert the members dictionary to a list of Member objects
+            List<Member> membersList = new();
+            foreach (var member in members)
+            {
+                membersList.Add(new Member { DiscordId = member.Key, DisplayName = member.Value });
+            }
+
+            // Create the new team
             var newTeam = new Team
             {
                 Id = GenerateTeamId() ?? throw new Exception("Failed to generate a unique team ID."),
                 Name = teamName,
-                Members = members
+                Members = membersList
             };
             return newTeam;
         }

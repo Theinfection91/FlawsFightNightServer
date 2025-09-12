@@ -10,6 +10,11 @@ namespace FlawsFightNightServer.Core.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public Dictionary<ulong, string> Members { get; set; } = new();
+        public List<Member> Members { get; set; }
+
+        public Team()
+        {
+            Members = new List<Member>();
+        }
     }
 }

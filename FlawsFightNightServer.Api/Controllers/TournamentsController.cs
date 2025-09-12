@@ -58,7 +58,18 @@ namespace FlawsFightNightServer.Api.Controllers
                 // Add the new tournament
                 _tournamentManager.AddTournament(newTournament);
 
-                return CreatedAtAction(nameof(GetTournament), new { id = newTournament.Id, newTournament.Name, newTournament.TeamSizeFormat  }, newTournament);
+                return CreatedAtAction(
+                    nameof(GetTournament),
+                    new { id = newTournament.Id }, // route values
+                    new
+                    {
+                        message = "Tournament created successfully.",
+                        tournamentId = newTournament.Id,
+                        tournamentName = newTournament.Name,
+                        tournamentType = newTournament.Type,
+                        teamSizeFormat = newTournament.TeamSizeFormat
+                    } // response body
+                );
             }
             catch (Exception ex)
             {

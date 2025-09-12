@@ -36,25 +36,27 @@ export default {
         const tournamentType = interaction.options.getString('type');
         const teamSize = interaction.options.getInteger('team_size');
 
+        const payload = {
+            name: tournamentName,
+            type: tournamentType,
+            team_size: teamSize
+        };
+
         try {
-            const created = await apiClient('/tournaments/create', {
+            const data = await apiClient('/tournaments/create', {
                 method: 'POST',
-                body: {
-                    name: tournamentName,
-                    //id: tournamentId,
-                    type: tournamentType,
-                    team_size: teamSize
-                },
+                body: payload
             });
-            await interaction.reply(`API response: ${JSON.stringify(created)}`);
+
+            await interaction.reply(
+                `✅ ${data.message}\nTournament ID: **${data.tournamentId}**\nName: **${data.tournamentName}**\nType: **${data.tournamentType}**\nFormat: **${data.teamSizeFormat}**`
+            );
             await interaction.followUp('Tournament created successfully!');
         } catch (error) {
-            if (error.status === 409) {
-                await interaction.reply('That tournament ID already exists!');
-            } else {
-                console.error(error);
-                await interaction.reply('Failed to create tournament via API.');
-            }
+            console.error('Full error object:', error);  // <-- log everything
+            await interaction.reply(
+                `❌ Failed to register team\nError message: ${error.message || error}\nStatus: ${error.status || 'unknown'}\nBody: ${JSON.stringify(error.body || error)}`
+            );
         }
     },
 };

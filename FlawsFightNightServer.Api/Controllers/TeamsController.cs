@@ -60,15 +60,16 @@ namespace FlawsFightNightServer.Api.Controllers
                 // Save changes to the database
                 _tournamentManager.SaveAndReloadTournaments();
 
-                return CreatedAtAction(nameof(GetTeam), new { id = newTeam.Id },
+                return CreatedAtAction(
+                    nameof(GetTeam),
+                    new { id = newTeam.Id },
                     new
                     {
                         message = "Team registered successfully.",
                         teamId = newTeam.Id,
                         teamName = newTeam.Name,
                         members = newTeam.Members
-                    }
-);
+                    });
             }
             catch (Exception ex)
             {

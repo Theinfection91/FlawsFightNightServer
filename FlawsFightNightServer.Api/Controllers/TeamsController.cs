@@ -21,7 +21,11 @@ namespace FlawsFightNightServer.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult GetTeam(string id)
         {
-            return Ok(new { message = "This is a placeholder response from TeamsController." });
+            var team = _teamManager.GetTeamById(id);
+            if (team == null)
+                return NotFound();
+
+            return Ok(team);
         }
 
         [HttpPost("register")]
@@ -34,7 +38,7 @@ namespace FlawsFightNightServer.Api.Controllers
                     return Conflict("Team name is already taken.");
                 }
 
-                if (!_tournamentManager.IsIdInDatabase(registerTeamRequest.TournamentId))
+                if (!_tournamentManager.IsTournamentIdInDatabase(registerTeamRequest.TournamentId))
                 {
                     return NotFound("Tournament not found.");
                 }
@@ -49,21 +53,27 @@ namespace FlawsFightNightServer.Api.Controllers
                 {
                     return BadRequest("Failed to create a new team.");
                 }
-                
+
                 // Add the new team to the specified tournament
                 tournament.AddTeam(newTeam);
 
                 // Save changes to the database
                 _tournamentManager.SaveAndReloadTournaments();
 
-                return Ok(new { message = "Team registered successfully." });
+                return CreatedAtAction(nameof(GetTeam), new { id = newTeam.Id },
+                    new
+                    {
+                        message = "Team registered successfully.",
+                        teamId = newTeam.Id,
+                        teamName = newTeam.Name,
+                        members = newTeam.Members
+                    }
+);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
             }
-            // Place holder logic here
-            
         }
     }
 }

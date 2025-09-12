@@ -1,4 +1,5 @@
 import { SlashCommandSubcommandBuilder } from 'discord.js';
+import { apiClient } from '../../apiClient.js';
 
 export default {
     data: new SlashCommandSubcommandBuilder()
@@ -55,16 +56,20 @@ export default {
         };
 
         try {
-            const response = await apiClient('/api/teams/register', {
+            const data = await apiClient('/teams/register', {
                 method: 'POST',
-                body: JSON.stringify(payload),
+                body: payload, // <- plain object
             });
 
             await interaction.reply(
-                `✅ Team **${teamName}** registered for tournament **${tournamentId}** with members: ${Object.values(members).join(', ')}`
+                `✅ ${data.message}\nTeam ID: **${data.teamId}**\nName: **${data.teamName}**\nMembers: ${Object.values(data.members).join(', ')}`
             );
         } catch (error) {
-            await interaction.reply(`❌ Failed to register team: ${error.message}`);
+            console.error('Full error object:', error);  // <-- log everything
+            await interaction.reply(
+                `❌ Failed to register team\nError message: ${error.message || error}\nStatus: ${error.status || 'unknown'}\nBody: ${JSON.stringify(error.body || error)}`
+            );
         }
+
     },
 };

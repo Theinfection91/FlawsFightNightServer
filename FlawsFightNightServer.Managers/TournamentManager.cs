@@ -30,7 +30,7 @@ namespace FlawsFightNightServer.Core.Managers
                 uniqueId = $"T{randomInt}";
 
                 // Check if the generated ID is unique
-                if (!IsIdInDatabase(uniqueId))
+                if (!IsTournamentIdInDatabase(uniqueId))
                 {
                     isUnique = true;
                     return uniqueId;
@@ -39,7 +39,7 @@ namespace FlawsFightNightServer.Core.Managers
             return null;
         }
 
-        public bool IsIdInDatabase(string id)
+        public bool IsTournamentIdInDatabase(string id)
         {
             return _dataManager.TournamentsDatabaseFile.Tournaments.Any(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
         }
@@ -56,7 +56,8 @@ namespace FlawsFightNightServer.Core.Managers
                 Id = GenerateTournamentId() ?? throw new Exception("Failed to generate a unique Tournament ID."),
                 Name = name,
                 Type = TournamentTypeResolver(type),
-                TeamSize = teamSize
+                TeamSize = teamSize,
+                Teams = new List<Team>()
             };
             return newTournament;
         }

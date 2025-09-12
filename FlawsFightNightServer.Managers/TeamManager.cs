@@ -15,6 +15,32 @@ namespace FlawsFightNightServer.Core.Managers
 
         }
 
+        public string? GenerateTeamId()
+        {
+            bool isUnique = false;
+            string uniqueId;
+
+            while (!isUnique)
+            {
+                Random random = new();
+                int randomInt = random.Next(100, 1000);
+                uniqueId = $"S{randomInt}";
+
+                // Check if the generated ID is unique
+                if (!IsTeamIdInDatabase(uniqueId))
+                {
+                    isUnique = true;
+                    return uniqueId;
+                }
+            }
+            return null;
+        }
+
+        public bool IsTeamIdInDatabase(string id)
+        {
+            return _dataManager.TournamentsDatabaseFile.Tournaments.Any(t => t.Teams.Any(team => team.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
+        }
+
         public bool IsTeamNameUnique(string teamName)
         {
             foreach (var tournament in _dataManager.TournamentsDatabaseFile.Tournaments)
@@ -27,10 +53,24 @@ namespace FlawsFightNightServer.Core.Managers
             return true;
         }
 
+        public Team? GetTeamById(string id)
+        {
+            foreach (var tournament in _dataManager.TournamentsDatabaseFile.Tournaments)
+            {
+                var team = tournament.Teams.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+                if (team != null)
+                {
+                    return team;
+                }
+            }
+            return null;
+        }
+
         public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members)
         {
             var newTeam = new Team
             {
+                Id = GenerateTeamId() ?? throw new Exception("Failed to generate a unique team ID."),
                 Name = teamName,
                 Members = members
             };

@@ -33,7 +33,7 @@ namespace FlawsFightNightServer.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult GetTournament(string id)
         {
-            var tournament = _tournamentManager.GetById(id);
+            var tournament = _tournamentManager.GetTournamentById(id);
             if (tournament == null)
                 return NotFound();
 

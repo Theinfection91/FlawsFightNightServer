@@ -7,10 +7,64 @@ export default {
         .addStringOption(option =>
             option.setName('name')
                 .setDescription('The name of the team')
-                .setRequired(true)),
-                
+                .setRequired(true))
+        .addStringOption(option =>
+            option.setName('tournamentid')
+                .setDescription('The ID of the tournament')
+                .setRequired(true))
+        // For now, command will accept up to 5 members
+        .addUserOption(option =>
+            option.setName('member1')
+                .setDescription('The first member of the team')
+                .setRequired(true))
+        .addUserOption(option =>
+            option.setName('member2')
+                .setDescription('The second member of the team')
+                .setRequired(false))
+        .addUserOption(option =>
+            option.setName('member3')
+                .setDescription('The third member of the team')
+                .setRequired(false))
+        .addUserOption(option =>
+            option.setName('member4')
+                .setDescription('The fourth member of the team')
+                .setRequired(false))
+        .addUserOption(option =>
+            option.setName('member5')
+                .setDescription('The fifth member of the team')
+                .setRequired(false)),
+
     async execute(interaction) {
         const teamName = interaction.options.getString('name');
-        await interaction.reply(`Team ${teamName} has been registered!`);
+        const tournamentId = interaction.options.getString('tournamentid');
+
+        // Collect members as dictionary { userId: username }
+        const members = {};
+        for (let i = 1; i <= 5; i++) {
+            const user = interaction.options.getUser(`member${i}`);
+            if (user) {
+                members[user.id] = user.username; // use .username or ask for in-game name separately
+            }
+        }
+
+        // Build request matching C# DTO
+        const payload = {
+            teamName,
+            tournamentId,
+            members
+        };
+
+        try {
+            const response = await apiClient('/api/teams/register', {
+                method: 'POST',
+                body: JSON.stringify(payload),
+            });
+
+            await interaction.reply(
+                `✅ Team **${teamName}** registered for tournament **${tournamentId}** with members: ${Object.values(members).join(', ')}`
+            );
+        } catch (error) {
+            await interaction.reply(`❌ Failed to register team: ${error.message}`);
+        }
     },
 };

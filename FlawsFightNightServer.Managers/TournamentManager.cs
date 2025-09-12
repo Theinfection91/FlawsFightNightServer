@@ -44,7 +44,7 @@ namespace FlawsFightNightServer.Core.Managers
             return _dataManager.TournamentsDatabaseFile.Tournaments.Any(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
         }
 
-        public Tournament? GetById(string id)
+        public Tournament? GetTournamentById(string id)
         {
             return _dataManager.TournamentsDatabaseFile.Tournaments.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
         }
@@ -76,6 +76,21 @@ namespace FlawsFightNightServer.Core.Managers
         public void AddTournament(Tournament tournament)
         {
             _dataManager.TournamentsDatabaseFile.Tournaments.Add(tournament);
+            _dataManager.SaveAndReloadTournamentsDatabaseFile().Wait();
+        }
+
+        public void SaveTournaments()
+        {
+            _dataManager.SaveAndReloadTournamentsDatabaseFile().Wait();
+        }
+
+        public void LoadTournaments()
+        {
+            _dataManager.LoadTournamentsDatabaseFile().Wait();
+        }
+
+        public void SaveAndReloadTournaments()
+        {
             _dataManager.SaveAndReloadTournamentsDatabaseFile().Wait();
         }
     }  

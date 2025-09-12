@@ -25,12 +25,12 @@ namespace FlawsFightNightServer.Core.Managers
         #region Tournaments Database
         public async Task LoadTournamentsDatabaseFile()
         {
-            TournamentsDatabaseFile = await Task.Run(() => _tournamentsDataHandler.Load());
+            TournamentsDatabaseFile = await Task.Run(() => _tournamentsDataHandler.LoadAsync());
         }
 
         public async Task SaveTournamentsDatabaseFile()
         {
-            await Task.Run(() => _tournamentsDataHandler.Save(TournamentsDatabaseFile));
+            await Task.Run(() => _tournamentsDataHandler.SaveAsync(TournamentsDatabaseFile));
         }
 
         public async Task SaveAndReloadTournamentsDatabaseFile()

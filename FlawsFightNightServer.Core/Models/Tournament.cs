@@ -17,5 +17,12 @@ namespace FlawsFightNightServer.Core.Models
         public int? TeamSize { get; set; }
         public string TeamSizeFormat => TeamSize.HasValue ? $"{TeamSize}v{TeamSize}" : "N/A";
         public List<Team> Teams = [];
+
+        public Tournament() { }
+
+        public void AddTeam(Team team)
+        {
+            Teams.Add(team);
+        }
     }
 }

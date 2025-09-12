@@ -1,4 +1,5 @@
-﻿using FlawsFightNightServer.Managers;
+﻿using FlawsFightNightServer.Core.Models;
+using FlawsFightNightServer.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,16 @@ namespace FlawsFightNightServer.Core.Managers
                 }
             }
             return true;
+        }
+
+        public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members)
+        {
+            var newTeam = new Team
+            {
+                Name = teamName,
+                Members = members
+            };
+            return newTeam;
         }
     }
 }

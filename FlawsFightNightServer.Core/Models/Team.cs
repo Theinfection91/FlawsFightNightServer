@@ -9,5 +9,6 @@ namespace FlawsFightNightServer.Core.Models
     public class Team
     {
         public string Name { get; set; }
+        public Dictionary<ulong, string> Members { get; set; } = new();
     }
 }

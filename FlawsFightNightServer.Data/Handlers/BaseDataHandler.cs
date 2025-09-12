@@ -33,35 +33,35 @@ namespace FlawsFightNightServer.Data.Handlers
             return filePath;
         }
 
-        private void InitializeFile()
+        private async void InitializeFile()
         {
             if (!File.Exists(_filePath))
             {
-                Save(new T());
+                await SaveAsync(new T());
             }
         }
 
-        public T Load()
-        {
-            lock (_lock)
-            {
-                try
-                {
-                    var json = File.ReadAllText(_filePath);
-                    return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All
-                    }) ?? new T();
-                }
-                catch
-                {
-                    Console.WriteLine($"Failed to read or parse {_filePath}. Reinitializing.");
-                    var data = new T();
-                    Save(data);
-                    return data;
-                }
-            }
-        }
+        //public T Load()
+        //{
+        //    lock (_lock)
+        //    {
+        //        try
+        //        {
+        //            var json = File.ReadAllText(_filePath);
+        //            return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings
+        //            {
+        //                TypeNameHandling = TypeNameHandling.All
+        //            }) ?? new T();
+        //        }
+        //        catch
+        //        {
+        //            Console.WriteLine($"Failed to read or parse {_filePath}. Reinitializing.");
+        //            var data = new T();
+        //            Save(data);
+        //            return data;
+        //        }
+        //    }
+        //}
 
         public async Task<T> LoadAsync()
         {
@@ -89,17 +89,17 @@ namespace FlawsFightNightServer.Data.Handlers
             }
         }
 
-        public void Save(T data)
-        {
-            lock (_lock)
-            {
-                var json = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
-                File.WriteAllText(_filePath, json);
-            }
-        }
+        //public void Save(T data)
+        //{
+        //    lock (_lock)
+        //    {
+        //        var json = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings
+        //        {
+        //            TypeNameHandling = TypeNameHandling.All
+        //        });
+        //        File.WriteAllText(_filePath, json);
+        //    }
+        //}
 
         public async Task SaveAsync(T data)
         {

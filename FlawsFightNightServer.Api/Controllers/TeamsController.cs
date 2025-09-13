@@ -18,7 +18,7 @@ namespace FlawsFightNightServer.Api.Controllers
             _tournamentManager = tournamentManager;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{guildId}/{teamId}")]
         public IActionResult GetTeam(string teamId, ulong guildId)
         {
             var team = _teamManager.GetTeamById(teamId, guildId);
@@ -26,6 +26,15 @@ namespace FlawsFightNightServer.Api.Controllers
                 return NotFound();
 
             return Ok(team);
+        }
+
+        [HttpGet("{guildId}/{tournamentId}/all")]
+        public IActionResult GetAllTeams(string tournamentId, ulong guildId)
+        {
+            var tournament = _tournamentManager.GetTournamentById(tournamentId, guildId);
+            if (tournament == null)
+                return NotFound("Tournament not found.");
+            return Ok(tournament.Teams);
         }
 
         [HttpPost("register")]

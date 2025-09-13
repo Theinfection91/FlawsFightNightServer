@@ -69,6 +69,25 @@ namespace FlawsFightNightServer.Core.Managers
             return null;
         }
 
+        public List<Tournament> GetAllTournamentsForGuild(ulong guildId)
+        {
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
+            {
+                return tournaments;
+            }
+            return new List<Tournament>();
+        }
+
+        public List<Tournament> GetAllTournaments()
+        {
+            var allTournaments = new List<Tournament>();
+            foreach (var guildTournaments in _dataManager.TournamentsDatabaseFile.TournamentsByGuild.Values)
+            {
+                allTournaments.AddRange(guildTournaments);
+            }
+            return allTournaments;
+        }
+
         public Tournament CreateNewTournament(string name, string type, int teamSize, ulong guildId)
         {
             var newTournament = new Tournament

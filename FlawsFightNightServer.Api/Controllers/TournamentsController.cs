@@ -16,21 +16,21 @@ namespace FlawsFightNightServer.Api.Controllers
             _tournamentManager = tournamentManager;
         }
 
-        // GET: api/tournaments
-        [HttpGet]
-        public IActionResult GetTournaments()
+        [HttpGet("all")]
+        public IActionResult GetAllTournaments()
         {
-            // Hardcoded sample data
-            var tournaments = new List<object>
-            {
-                new { Id = 1, Name = "Flaws Fight Night #1", Teams = 8 },
-                new { Id = 2, Name = "Flaws Fight Night #2", Teams = 16 }
-            };
-
+            var tournaments = _tournamentManager.GetAllTournaments();
             return Ok(tournaments);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{guildId}")]
+        public IActionResult GetAllTournamentsForGuild(ulong guildId)
+        {
+            var tournaments = _tournamentManager.GetAllTournamentsForGuild(guildId);
+            return Ok(tournaments);
+        }
+
+        [HttpGet("{guildId}/{tournamentId}")]
         public IActionResult GetTournament(string tournamentId, ulong guildId)
         {
             var tournament = _tournamentManager.GetTournamentById(tournamentId, guildId);

@@ -17,12 +17,18 @@ namespace FlawsFightNightServer.Core.Models
         public int? TeamSize { get; set; }
         public string TeamSizeFormat => TeamSize.HasValue ? $"{TeamSize}v{TeamSize}" : "N/A";
         public List<Team> Teams { get; set; }
+        public bool IsTeamsLocked { get; set; }
 
         public Tournament() { }
 
         public void AddTeam(Team team)
         {
             Teams.Add(team);
+        }
+
+        public void LockTeams()
+        {
+            IsTeamsLocked = true;
         }
     }
 }

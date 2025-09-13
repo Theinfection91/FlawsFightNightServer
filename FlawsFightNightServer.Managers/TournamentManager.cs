@@ -57,7 +57,8 @@ namespace FlawsFightNightServer.Core.Managers
                 Name = name,
                 Type = TournamentTypeResolver(type),
                 TeamSize = teamSize,
-                Teams = new List<Team>()
+                Teams = new List<Team>(),
+                IsTeamsLocked = false
             };
             return newTournament;
         }

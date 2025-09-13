@@ -76,5 +76,32 @@ namespace FlawsFightNightServer.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPatch("lock-teams")]
+        public IActionResult LockTeams([FromBody] LockTeamsRequest lockTeamsRequest)
+        {
+            try
+            {
+                if (!_tournamentManager.IsTournamentIdInDatabase(lockTeamsRequest.TournamentId))
+                {
+                    return NotFound("Tournament not found.");
+                }
+                Tournament tournament = _tournamentManager.GetTournamentById(lockTeamsRequest.TournamentId);
+
+                if (tournament.IsTeamsLocked)
+                {
+                    return BadRequest("Teams are already locked for this tournament.");
+                }
+
+                tournament.LockTeams();
+                // Save changes to the database
+                _tournamentManager.SaveAndReloadTournaments();
+                return Ok(new { message = "Teams locked successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

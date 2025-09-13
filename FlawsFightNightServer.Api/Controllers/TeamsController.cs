@@ -76,5 +76,37 @@ namespace FlawsFightNightServer.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpDelete("delete")]
+        public IActionResult DeleteTeam([FromBody] DeleteTeamRequest removeTeamRequest)
+        {
+            try
+            {
+                if (!_tournamentManager.IsTournamentIdInDatabase(removeTeamRequest.TournamentId))
+                {
+                    return NotFound("Tournament not found.");
+                }
+                Tournament tournament = _tournamentManager.GetTournamentById(removeTeamRequest.TournamentId);
+                Team team = _teamManager.GetTeamById(removeTeamRequest.TeamId);
+                if (team == null)
+                {
+                    return NotFound("Team not found.");
+                }
+                // Remove the team from the specified tournament
+                tournament.Teams.RemoveAll(t => t.Id.Equals(removeTeamRequest.TeamId, StringComparison.OrdinalIgnoreCase));
+                // Save changes to the database
+                _tournamentManager.SaveAndReloadTournaments();
+                return Ok(new
+                {
+                    message = "Team removed successfully.",
+                    teamId = team.Id,
+                    teamName = team.Name
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

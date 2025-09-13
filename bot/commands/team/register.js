@@ -70,6 +70,5 @@ export default {
                 `❌ Failed to register team\nError message: ${error.message || error}\nStatus: ${error.status || 'unknown'}\nBody: ${JSON.stringify(error.body || error)}`
             );
         }
-
     },
 };

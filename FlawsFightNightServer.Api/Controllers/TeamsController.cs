@@ -29,12 +29,21 @@ namespace FlawsFightNightServer.Api.Controllers
         }
 
         [HttpGet("{guildId}/{tournamentId}/all")]
-        public IActionResult GetAllTeams(string tournamentId, ulong guildId)
+        public IActionResult GetAllTeamsForTournament(string tournamentId, ulong guildId)
         {
             var tournament = _tournamentManager.GetTournamentById(tournamentId, guildId);
             if (tournament == null)
                 return NotFound("Tournament not found.");
             return Ok(tournament.Teams);
+        }
+
+        [HttpGet("{guildId}/all")]
+        public IActionResult GetAllTeamsForGuild(ulong guildId)
+        {
+            var teams = _teamManager.GetAllTeamsForGuild(guildId);
+            if (teams == null || teams.Count == 0)
+                return NotFound("No teams found for this guild.");
+            return Ok(teams);
         }
 
         [HttpPost("register")]

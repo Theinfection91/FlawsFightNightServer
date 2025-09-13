@@ -83,6 +83,19 @@ namespace FlawsFightNightServer.Core.Managers
             return null;
         }
 
+        public List<Team> GetAllTeamsForGuild(ulong guildId)
+        {
+            List<Team> allTeams = new();
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
+            {
+                foreach (var tournament in tournaments)
+                {
+                    allTeams.AddRange(tournament.Teams);
+                }
+            }
+            return allTeams;
+        }
+
         public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members, ulong guildId)
         {
             // Convert the members dictionary to a list of Member objects

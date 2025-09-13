@@ -48,11 +48,19 @@ export default {
             }
         }
 
+        const guildId = interaction.guildId;
+
+        if (!guildId) {
+            await interaction.reply('❌ This command can only be used in a server.');
+            return;
+        }
+
         // Build request matching C# DTO
         const payload = {
             teamName,
             tournamentId,
-            members
+            members,
+            guildId
         };
 
         try {

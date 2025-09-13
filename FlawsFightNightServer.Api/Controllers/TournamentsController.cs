@@ -31,9 +31,9 @@ namespace FlawsFightNightServer.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTournament(string id)
+        public IActionResult GetTournament(string tournamentId, ulong guildId)
         {
-            var tournament = _tournamentManager.GetTournamentById(id);
+            var tournament = _tournamentManager.GetTournamentById(tournamentId, guildId);
             if (tournament == null)
                 return NotFound();
 
@@ -49,14 +49,15 @@ namespace FlawsFightNightServer.Api.Controllers
                 Tournament newTournament = _tournamentManager.CreateNewTournament(
                     createTournamentRequest.TournamentName,
                     createTournamentRequest.TournamentType,
-                    createTournamentRequest.TeamSize
+                    createTournamentRequest.TeamSize,
+                    createTournamentRequest.GuildId
                 );
                 if (newTournament == null)
                 {
                     return BadRequest("Failed to create a new tournament.");
                 }
                 // Add the new tournament
-                _tournamentManager.AddTournament(newTournament);
+                _tournamentManager.AddTournament(createTournamentRequest.GuildId, newTournament);
 
                 return CreatedAtAction(
                     nameof(GetTournament),
@@ -82,11 +83,11 @@ namespace FlawsFightNightServer.Api.Controllers
         {
             try
             {
-                if (!_tournamentManager.IsTournamentIdInDatabase(lockTeamsRequest.TournamentId))
+                if (!_tournamentManager.IsTournamentIdInDatabase(lockTeamsRequest.TournamentId, lockTeamsRequest.GuildId))
                 {
                     return NotFound("Tournament not found.");
                 }
-                Tournament tournament = _tournamentManager.GetTournamentById(lockTeamsRequest.TournamentId);
+                Tournament tournament = _tournamentManager.GetTournamentById(lockTeamsRequest.TournamentId, lockTeamsRequest.GuildId);
 
                 if (tournament.IsTeamsLocked)
                 {

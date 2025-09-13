@@ -13,12 +13,12 @@ namespace FlawsFightNightServer.Core.Managers
     {
         public TournamentManager(DataManager dataManager) : base("TournamentManager", dataManager)
         {
-            
+
         }
 
 
 
-        public string? GenerateTournamentId()
+        public string? GenerateTournamentId(ulong guildId)
         {
             bool isUnique = false;
             string uniqueId;
@@ -30,7 +30,7 @@ namespace FlawsFightNightServer.Core.Managers
                 uniqueId = $"T{randomInt}";
 
                 // Check if the generated ID is unique
-                if (!IsTournamentIdInDatabase(uniqueId))
+                if (!IsTournamentIdInDatabase(uniqueId, guildId))
                 {
                     isUnique = true;
                     return uniqueId;
@@ -39,21 +39,41 @@ namespace FlawsFightNightServer.Core.Managers
             return null;
         }
 
-        public bool IsTournamentIdInDatabase(string id)
+        public bool IsTournamentIdInDatabase(string tournamentId, ulong guildId)
         {
-            return _dataManager.TournamentsDatabaseFile.Tournaments.Any(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
+            {
+                foreach (var tournament in tournaments)
+                {
+                    if (tournament.Id.Equals(tournamentId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
-        public Tournament? GetTournamentById(string id)
+        public Tournament? GetTournamentById(string tournamentId, ulong guildId)
         {
-            return _dataManager.TournamentsDatabaseFile.Tournaments.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
+            {
+                foreach (var tournament in tournaments)
+                {
+                    if (tournament.Id.Equals(tournamentId, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return tournament;
+                    }
+                }
+            }
+            return null;
         }
 
-        public Tournament CreateNewTournament(string name, string type, int teamSize)
+        public Tournament CreateNewTournament(string name, string type, int teamSize, ulong guildId)
         {
             var newTournament = new Tournament
             {
-                Id = GenerateTournamentId() ?? throw new Exception("Failed to generate a unique Tournament ID."),
+                Id = GenerateTournamentId(guildId) ?? throw new Exception("Failed to generate a unique Tournament ID."),
                 Name = name,
                 Type = TournamentTypeResolver(type),
                 TeamSize = teamSize,
@@ -75,9 +95,17 @@ namespace FlawsFightNightServer.Core.Managers
             };
         }
 
-        public void AddTournament(Tournament tournament)
+        public void AddTournament(ulong guildId, Tournament tournament)
         {
-            _dataManager.TournamentsDatabaseFile.Tournaments.Add(tournament);
+            // Ensure the guild entry exists
+            if (!_dataManager.TournamentsDatabaseFile.TournamentsByGuild.ContainsKey(guildId))
+            {
+                _dataManager.TournamentsDatabaseFile.TournamentsByGuild[guildId] = new List<Tournament>();
+            }
+            // Add the tournament to the guild's list
+            _dataManager.TournamentsDatabaseFile.TournamentsByGuild[guildId].Add(tournament);
+
+            // Save changes and reload the database file
             _dataManager.SaveAndReloadTournamentsDatabaseFile().Wait();
         }
 
@@ -95,5 +123,5 @@ namespace FlawsFightNightServer.Core.Managers
         {
             _dataManager.SaveAndReloadTournamentsDatabaseFile().Wait();
         }
-    }  
+    }
 }

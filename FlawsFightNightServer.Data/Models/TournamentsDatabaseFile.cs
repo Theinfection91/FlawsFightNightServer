@@ -9,6 +9,6 @@ namespace FlawsFightNightServer.Data.Models
 {
     public class TournamentsDatabaseFile
     {
-        public List<Tournament> Tournaments { get; set; } = [];
+        public Dictionary<ulong, List<Tournament>> TournamentsByGuild { get; set; } = [];
     }
 }

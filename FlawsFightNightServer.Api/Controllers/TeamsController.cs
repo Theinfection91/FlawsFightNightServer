@@ -19,9 +19,9 @@ namespace FlawsFightNightServer.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetTeam(string id)
+        public IActionResult GetTeam(string teamId, ulong guildId)
         {
-            var team = _teamManager.GetTeamById(id);
+            var team = _teamManager.GetTeamById(teamId, guildId);
             if (team == null)
                 return NotFound();
 
@@ -33,21 +33,27 @@ namespace FlawsFightNightServer.Api.Controllers
         {
             try
             {
-                if (!_teamManager.IsTeamNameUnique(registerTeamRequest.TeamName))
+                if (!_teamManager.IsTeamNameUnique(registerTeamRequest.TeamName, registerTeamRequest.GuildId))
                 {
                     return Conflict("Team name is already taken.");
                 }
 
-                if (!_tournamentManager.IsTournamentIdInDatabase(registerTeamRequest.TournamentId))
+                if (!_tournamentManager.IsTournamentIdInDatabase(registerTeamRequest.TournamentId, registerTeamRequest.GuildId))
                 {
                     return NotFound("Tournament not found.");
                 }
 
-                Tournament tournament = _tournamentManager.GetTournamentById(registerTeamRequest.TournamentId);
+                Tournament? tournament = _tournamentManager.GetTournamentById(registerTeamRequest.TournamentId, registerTeamRequest.GuildId);
+
+                if (tournament == null)
+                {
+                    return NotFound("Tournament not found.");
+                }
 
                 Team newTeam = _teamManager.CreateNewTeam(
                     registerTeamRequest.TeamName,
-                    registerTeamRequest.Members
+                    registerTeamRequest.Members,
+                    registerTeamRequest.GuildId
                 );
                 if (newTeam == null)
                 {
@@ -82,12 +88,12 @@ namespace FlawsFightNightServer.Api.Controllers
         {
             try
             {
-                if (!_tournamentManager.IsTournamentIdInDatabase(removeTeamRequest.TournamentId))
+                if (!_tournamentManager.IsTournamentIdInDatabase(removeTeamRequest.TournamentId, removeTeamRequest.GuildId))
                 {
                     return NotFound("Tournament not found.");
                 }
-                Tournament tournament = _tournamentManager.GetTournamentById(removeTeamRequest.TournamentId);
-                Team team = _teamManager.GetTeamById(removeTeamRequest.TeamId);
+                Tournament tournament = _tournamentManager.GetTournamentById(removeTeamRequest.TournamentId, removeTeamRequest.GuildId);
+                Team team = _teamManager.GetTeamById(removeTeamRequest.TeamId, removeTeamRequest.GuildId);
                 if (team == null)
                 {
                     return NotFound("Team not found.");

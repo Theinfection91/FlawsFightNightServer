@@ -11,9 +11,16 @@ export default {
                 .setRequired(true)),
     async execute(interaction) {
         const tournamentId = interaction.options.getString("tournamentId");
+        const guildId = interaction.guildId;
+
+        if (!guildId) {
+            await interaction.reply('❌ This command can only be used in a server.');
+            return;
+        }
 
         const payload = {
             tournamentId,
+            guildId
         };
 
         try {

@@ -11,9 +11,16 @@ export default {
                 .setRequired(true)),
     async execute(interaction) {
         const user = interaction.options.getUser("user");
+        const guildId = interaction.guildId;
+        
+        if (!guildId) {
+            await interaction.reply('❌ This command can only be used in a server.');
+            return;
+        }
 
         const payload = {
             userId: user.id,
+            guild_id: guildId
         };
 
         try {

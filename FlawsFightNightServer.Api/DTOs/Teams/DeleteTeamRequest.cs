@@ -4,5 +4,6 @@
     {
         public string TeamId { get; set; }
         public string TournamentId { get; set; }
+        public ulong GuildId { get; set; }
     }
 }

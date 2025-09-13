@@ -3,5 +3,6 @@
     public class LockTeamsRequest
     {
         public string TournamentId { get; set; }
+        public ulong GuildId { get; set; }
     }
 }

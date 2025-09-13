@@ -10,5 +10,7 @@ namespace FlawsFightNightServer.Api.DTOs.Tournaments
         public string TournamentType { get; set; }
         [JsonPropertyName("team_size")]
         public int TeamSize { get; set; }
+        [JsonPropertyName("guild_id")]
+        public ulong GuildId { get; set; }
     }
 }

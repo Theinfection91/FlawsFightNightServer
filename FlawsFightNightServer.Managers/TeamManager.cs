@@ -15,7 +15,7 @@ namespace FlawsFightNightServer.Core.Managers
 
         }
 
-        public string? GenerateTeamId()
+        public string? GenerateTeamId(ulong guildId)
         {
             bool isUnique = false;
             string uniqueId;
@@ -27,7 +27,7 @@ namespace FlawsFightNightServer.Core.Managers
                 uniqueId = $"S{randomInt}";
 
                 // Check if the generated ID is unique
-                if (!IsTeamIdInDatabase(uniqueId))
+                if (!IsTeamIdInDatabase(uniqueId, guildId))
                 {
                     isUnique = true;
                     return uniqueId;
@@ -36,37 +36,54 @@ namespace FlawsFightNightServer.Core.Managers
             return null;
         }
 
-        public bool IsTeamIdInDatabase(string id)
+        public bool IsTeamIdInDatabase(string teamId, ulong guildId)
         {
-            return _dataManager.TournamentsDatabaseFile.Tournaments.Any(t => t.Teams.Any(team => team.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
+            {
+                foreach (var tournament in tournaments)
+                {
+                    if (tournament.Teams.Any(t => t.Id.Equals(teamId, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return false;
         }
 
-        public bool IsTeamNameUnique(string teamName)
+        public bool IsTeamNameUnique(string teamName, ulong guildId)
         {
-            foreach (var tournament in _dataManager.TournamentsDatabaseFile.Tournaments)
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
             {
-                if (tournament.Teams.Any(t => t.Name.Equals(teamName, StringComparison.OrdinalIgnoreCase)))
+                foreach (var tournament in tournaments)
                 {
-                    return false;
+                    if (tournament.Teams.Any(t => t.Name.Equals(teamName, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
         }
 
-        public Team? GetTeamById(string id)
+        public Team? GetTeamById(string teamId, ulong guildId)
         {
-            foreach (var tournament in _dataManager.TournamentsDatabaseFile.Tournaments)
+            if (_dataManager.TournamentsDatabaseFile.TournamentsByGuild.TryGetValue(guildId, out var tournaments))
             {
-                var team = tournament.Teams.FirstOrDefault(t => t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
-                if (team != null)
+                foreach (var tournament in tournaments)
                 {
-                    return team;
+                    var team = tournament.Teams.FirstOrDefault(t => t.Id.Equals(teamId, StringComparison.OrdinalIgnoreCase));
+                    if (team != null)
+                    {
+                        return team;
+                    }
                 }
             }
             return null;
         }
 
-        public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members)
+        public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members, ulong guildId)
         {
             // Convert the members dictionary to a list of Member objects
             List<Member> membersList = new();
@@ -78,7 +95,7 @@ namespace FlawsFightNightServer.Core.Managers
             // Create the new team
             var newTeam = new Team
             {
-                Id = GenerateTeamId() ?? throw new Exception("Failed to generate a unique team ID."),
+                Id = GenerateTeamId(guildId) ?? throw new Exception("Failed to generate a unique team ID."),
                 Name = teamName,
                 Members = membersList
             };

@@ -20,11 +20,18 @@ export default {
     async execute(interaction) {
         const teamId = interaction.options.getString("teamid");
         const tournamentId = interaction.options.getString("tournamentid");
+        const guildId = interaction.guildId;
+
+        if (!guildId) {
+            await interaction.reply('❌ This command can only be used in a server.');
+            return;
+        }
 
         // Build request matching C# DTO
         const payload = {
             teamId,
             tournamentId,
+            guildId
         };
 
         try {

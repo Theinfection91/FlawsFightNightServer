@@ -35,11 +35,18 @@ export default {
         const tournamentName = interaction.options.getString('name');
         const tournamentType = interaction.options.getString('type');
         const teamSize = interaction.options.getInteger('team_size');
+        const guildId = interaction.guildId;
+
+        if (!guildId) {
+            await interaction.reply('❌ This command can only be used in a server.');
+            return;
+        }
 
         const payload = {
             name: tournamentName,
             type: tournamentType,
-            team_size: teamSize
+            team_size: teamSize,
+            guild_id: guildId
         };
 
         try {

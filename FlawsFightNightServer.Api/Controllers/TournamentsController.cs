@@ -50,11 +50,24 @@ namespace FlawsFightNightServer.Api.Controllers
         {
             try
             {
+                var guild = await _dbContext.Guilds.FindAsync(createTournamentRequest.GuildId);
+                if (guild == null)
+                {
+                    guild = new Guild
+                    {
+                        Id = createTournamentRequest.GuildId,
+                        Name = $"Guild_{createTournamentRequest.GuildId}" // placeholder name, or fetch from bot
+                    };
+                    _dbContext.Guilds.Add(guild);
+                    await _dbContext.SaveChangesAsync(); // commit guild first
+                }
+
                 Tournament newTournament = _tournamentManager.CreateNewTournament(
                     createTournamentRequest.TournamentName,
                     createTournamentRequest.TournamentType,
                     createTournamentRequest.TeamSize,
-                    createTournamentRequest.GuildId
+                    createTournamentRequest.GuildId,
+                    guild
                 );
                 if (newTournament == null)
                 {
@@ -69,7 +82,7 @@ namespace FlawsFightNightServer.Api.Controllers
 
                 return CreatedAtAction(
                     nameof(GetTournament),
-                    new { id = newTournament.Id }, // route values
+                    new { guildId = createTournamentRequest.GuildId, tournamentId = newTournament.Id }, // must match param names
                     new
                     {
                         message = "Tournament created successfully.",
@@ -77,7 +90,7 @@ namespace FlawsFightNightServer.Api.Controllers
                         tournamentName = newTournament.Name,
                         tournamentType = newTournament.Type,
                         teamSizeFormat = newTournament.TeamSizeFormat
-                    } // response body
+                    }
                 );
             }
             catch (Exception ex)

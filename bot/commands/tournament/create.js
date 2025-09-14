@@ -62,7 +62,7 @@ export default {
         } catch (error) {
             console.error('Full error object:', error);  // <-- log everything
             await interaction.reply(
-                `❌ Failed to register team\nError message: ${error.message || error}\nStatus: ${error.status || 'unknown'}\nBody: ${JSON.stringify(error.body || error)}`
+                `❌ Failed to create tournament\nError message: ${error.message || error}\nStatus: ${error.status || 'unknown'}\nBody: ${JSON.stringify(error.body || error)}`
             );
         }
     },

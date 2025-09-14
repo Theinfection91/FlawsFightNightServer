@@ -1,8 +1,11 @@
 ﻿using FlawsFightNightServer.Api.DTOs.Teams;
 using FlawsFightNightServer.Core.Managers;
 using FlawsFightNightServer.Core.Models;
+using FlawsFightNightServer.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace FlawsFightNightServer.Api.Controllers
 {
@@ -10,20 +13,24 @@ namespace FlawsFightNightServer.Api.Controllers
     [ApiController]
     public class TeamsController : ControllerBase
     {
+        private AppDbContext _dbContext;
         private TeamManager _teamManager;
         private TournamentManager _tournamentManager;
-        public TeamsController(TeamManager teamManager, TournamentManager tournamentManager)
+        public TeamsController(AppDbContext dbContext, TeamManager teamManager, TournamentManager tournamentManager)
         {
+            _dbContext = dbContext;
             _teamManager = teamManager;
             _tournamentManager = tournamentManager;
         }
 
         [HttpGet("{guildId}/{teamId}")]
-        public IActionResult GetTeam(string teamId, ulong guildId)
+        public async Task<IActionResult> GetTeam(string teamId, ulong guildId)
         {
-            var team = _teamManager.GetTeamById(teamId, guildId);
-            if (team == null)
-                return NotFound();
+            var team = await _dbContext.Teams
+        .Include(t => t.Members)
+        .FirstOrDefaultAsync(t => t.Id == teamId && t.Tournament.GuildId == guildId);
+
+            if (team == null) return NotFound();
 
             return Ok(team);
         }
@@ -47,22 +54,24 @@ namespace FlawsFightNightServer.Api.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult RegisterTeam([FromBody] RegisterTeamRequest registerTeamRequest)
+        public async Task<IActionResult> RegisterTeam([FromBody] RegisterTeamRequest registerTeamRequest)
         {
             try
             {
-                if (!_teamManager.IsTeamNameUnique(registerTeamRequest.TeamName, registerTeamRequest.GuildId))
-                {
-                    return Conflict("Team name is already taken.");
-                }
+                //if (!_teamManager.IsTeamNameUnique(registerTeamRequest.TeamName, registerTeamRequest.GuildId))
+                //{
+                //    return Conflict("Team name is already taken.");
+                //}
 
-                if (!_tournamentManager.IsTournamentIdInDatabase(registerTeamRequest.TournamentId, registerTeamRequest.GuildId))
-                {
-                    return NotFound("Tournament not found.");
-                }
-
-                Tournament? tournament = _tournamentManager.GetTournamentById(registerTeamRequest.TournamentId, registerTeamRequest.GuildId);
-
+                //if (!_tournamentManager.IsTournamentIdInDatabase(registerTeamRequest.TournamentId, registerTeamRequest.GuildId))
+                //{
+                //    return NotFound("Tournament not found.");
+                //}
+                Tournament tournament = _dbContext.Tournaments
+                    .Include(t => t.Teams)
+                    .FirstOrDefault(t => t.Id == registerTeamRequest.TournamentId && t.GuildId == registerTeamRequest.GuildId);
+                //Tournament? tournament = _tournamentManager.GetTournamentById(registerTeamRequest.TournamentId, registerTeamRequest.GuildId);
+                
                 if (tournament == null)
                 {
                     return NotFound("Tournament not found.");
@@ -71,7 +80,9 @@ namespace FlawsFightNightServer.Api.Controllers
                 Team newTeam = _teamManager.CreateNewTeam(
                     registerTeamRequest.TeamName,
                     registerTeamRequest.Members,
-                    registerTeamRequest.GuildId
+                    registerTeamRequest.GuildId,
+                    tournament.Id,
+                    tournament
                 );
                 if (newTeam == null)
                 {
@@ -79,14 +90,16 @@ namespace FlawsFightNightServer.Api.Controllers
                 }
 
                 // Add the new team to the specified tournament
-                tournament.AddTeam(newTeam);
+                //tournament.AddTeam(newTeam);
+                _dbContext.Teams.Add(newTeam);
+                await _dbContext.SaveChangesAsync();
 
                 // Save changes to the database
-                _tournamentManager.SaveAndReloadTournaments();
+                //_tournamentManager.SaveAndReloadTournaments();
 
                 return CreatedAtAction(
                     nameof(GetTeam),
-                    new { id = newTeam.Id },
+                    new { id = newTeam.Id, guildId = registerTeamRequest.GuildId },
                     new
                     {
                         message = "Team registered successfully.",

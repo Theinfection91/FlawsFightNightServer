@@ -8,7 +8,8 @@ namespace FlawsFightNightServer.Core.Models
 {
     public class Member
     {
-        public ulong Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string DiscordId { get; set; }
         public string? Name { get; set; }
 
         public string TeamId { get; set; }

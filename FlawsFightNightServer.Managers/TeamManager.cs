@@ -96,23 +96,31 @@ namespace FlawsFightNightServer.Core.Managers
             return allTeams;
         }
 
-        public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members, ulong guildId)
+        public Team CreateNewTeam(string teamName, Dictionary<ulong, string> members, ulong guildId, string tournamentId, Tournament tournament)
         {
-            // Convert the members dictionary to a list of Member objects
-            List<Member> membersList = new();
-            foreach (var member in members)
-            {
-                membersList.Add(new Member { Id = member.Key, Name = member.Value });
-            }
-
             // Create the new team
             var newTeam = new Team
             {
                 Id = GenerateTeamId(guildId) ?? throw new Exception("Failed to generate a unique team ID."),
                 Name = teamName,
-                Members = membersList
+                TournamentId = tournamentId,
+                Tournament = tournament
             };
+
+            // Convert the members dictionary to a list of Member objects
+            List<Member> membersList = new();
+            foreach (var member in members)
+            {
+                membersList.Add(new Member { DiscordId = member.Key.ToString(), Name = member.Value, TeamId = newTeam.Id, Team = newTeam });
+            }
+
+            newTeam.Members = membersList;
+
             return newTeam;
         }
     }
 }
+
+
+
+

@@ -40,6 +40,11 @@ namespace FlawsFightNightServer.Data
                 .HasForeignKey(k => k.TeamId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Members
+            modelBuilder.Entity<Member>()
+                .HasIndex(m => m.DiscordId)
+                .IsUnique(); // ensures only one record per Discord user
+
             // TODO Tournament -> MatchLog (1-to-many)
 
 
@@ -49,7 +54,7 @@ namespace FlawsFightNightServer.Data
             modelBuilder.Entity<Guild>().HasKey(g => g.Id);
             modelBuilder.Entity<Tournament>().HasKey(t => t.Id);
             modelBuilder.Entity<Team>().HasKey(t => t.Id);
-            modelBuilder.Entity<Member>().HasKey(m => m.Id);
+            modelBuilder.Entity<Member>().HasKey(m => m.DiscordId);
             // modelBuilder.Entity<MatchLog>().HasKey(m => m.Id);
             // modelBuilder.Entity<Entry>().HasKey(e => e.Id);
 

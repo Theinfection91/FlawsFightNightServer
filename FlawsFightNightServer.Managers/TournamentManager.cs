@@ -88,12 +88,14 @@ namespace FlawsFightNightServer.Core.Managers
             return allTournaments;
         }
 
-        public Tournament CreateNewTournament(string name, string type, int teamSize, ulong guildId)
+        public Tournament CreateNewTournament(string name, string type, int teamSize, ulong guildId, Guild guild)
         {
             var newTournament = new Tournament
             {
                 Id = GenerateTournamentId(guildId) ?? throw new Exception("Failed to generate a unique Tournament ID."),
                 Name = name,
+                GuildId = guildId,
+                Guild = guild,
                 Type = TournamentTypeResolver(type),
                 TeamSize = teamSize,
                 Teams = new List<Team>(),

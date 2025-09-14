@@ -1,8 +1,10 @@
 ﻿using FlawsFightNightServer.Api.DTOs.Tournaments;
 using FlawsFightNightServer.Core.Managers;
 using FlawsFightNightServer.Core.Models;
+using FlawsFightNightServer.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FlawsFightNightServer.Api.Controllers
 {
@@ -10,9 +12,11 @@ namespace FlawsFightNightServer.Api.Controllers
     [ApiController]
     public class TournamentsController : ControllerBase
     {
+        private readonly AppDbContext _dbContext;
         private TournamentManager _tournamentManager;
-        public TournamentsController(TournamentManager tournamentManager)
+        public TournamentsController(AppDbContext dbContext, TournamentManager tournamentManager)
         {
+            _dbContext = dbContext;
             _tournamentManager = tournamentManager;
         }
 
@@ -42,7 +46,7 @@ namespace FlawsFightNightServer.Api.Controllers
 
         // POST: api/tournaments/create
         [HttpPost("create")]
-        public IActionResult CreateTournament([FromBody] CreateTournamentRequest createTournamentRequest)
+        public async Task<IActionResult> CreateTournament([FromBody] CreateTournamentRequest createTournamentRequest)
         {
             try
             {
@@ -56,8 +60,12 @@ namespace FlawsFightNightServer.Api.Controllers
                 {
                     return BadRequest("Failed to create a new tournament.");
                 }
-                // Add the new tournament
-                _tournamentManager.AddTournament(createTournamentRequest.GuildId, newTournament);
+                // Add the new tournament (OLD WAY)
+                //_tournamentManager.AddTournament(createTournamentRequest.GuildId, newTournament);
+
+                // Save changes to the database
+                _dbContext.Tournaments.Add(newTournament);
+                await _dbContext.SaveChangesAsync();
 
                 return CreatedAtAction(
                     nameof(GetTournament),

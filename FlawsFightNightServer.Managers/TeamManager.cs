@@ -102,7 +102,7 @@ namespace FlawsFightNightServer.Core.Managers
             List<Member> membersList = new();
             foreach (var member in members)
             {
-                membersList.Add(new Member { DiscordId = member.Key, DisplayName = member.Value });
+                membersList.Add(new Member { Id = member.Key, Name = member.Value });
             }
 
             // Create the new team

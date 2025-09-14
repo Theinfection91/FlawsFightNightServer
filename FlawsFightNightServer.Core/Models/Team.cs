@@ -12,6 +12,10 @@ namespace FlawsFightNightServer.Core.Models
         public string Name { get; set; }
         public List<Member> Members { get; set; }
 
+        // Foreign Key to Tournament
+        public string TournamentId { get; set; }
+        public Tournament Tournament { get; set; }
+
         public Team()
         {
             Members = new List<Member>();

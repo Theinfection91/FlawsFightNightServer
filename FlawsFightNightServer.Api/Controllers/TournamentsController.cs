@@ -75,6 +75,7 @@ namespace FlawsFightNightServer.Api.Controllers
                 }
                 // Add the new tournament (OLD WAY)
                 //_tournamentManager.AddTournament(createTournamentRequest.GuildId, newTournament);
+                //
 
                 // Save changes to the database
                 _dbContext.Tournaments.Add(newTournament);

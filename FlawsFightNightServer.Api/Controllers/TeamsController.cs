@@ -71,7 +71,7 @@ namespace FlawsFightNightServer.Api.Controllers
                     .Include(t => t.Teams)
                     .FirstOrDefault(t => t.Id == registerTeamRequest.TournamentId && t.GuildId == registerTeamRequest.GuildId);
                 //Tournament? tournament = _tournamentManager.GetTournamentById(registerTeamRequest.TournamentId, registerTeamRequest.GuildId);
-                
+
                 if (tournament == null)
                 {
                     return NotFound("Tournament not found.");
@@ -99,8 +99,12 @@ namespace FlawsFightNightServer.Api.Controllers
 
                 return CreatedAtAction(
                     nameof(GetTeam),
-                    new { id = newTeam.Id, guildId = registerTeamRequest.GuildId },
-                    new
+                    routeValues: new
+                    {
+                        guildId = registerTeamRequest.GuildId,
+                        teamId = newTeam.Id
+                    },
+                    value: new
                     {
                         message = "Team registered successfully.",
                         teamId = newTeam.Id,
